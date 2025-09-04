@@ -78,13 +78,16 @@ app.use(session({
   saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/nit-mentor-connect',
-    touchAfter: 24 * 3600 // lazy session update
+    touchAfter: 24 * 3600, // lazy session update
+    ttl: 24 * 60 * 60 // 24 hours TTL
   }),
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    secure: false, // Set to false for Vercel compatibility
     httpOnly: true, // Prevent XSS
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: 'lax' // Better compatibility with serverless
+  },
+  name: 'nit.mentor.connect.sid' // Custom session name
 }));
 
 // Set view engine

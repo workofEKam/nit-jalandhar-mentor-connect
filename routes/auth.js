@@ -43,11 +43,19 @@ router.post('/login', [
       isAdmin: user.isAdmin
     };
     
-    if (user.isAdmin) {
-      res.redirect('/admin/dashboard');
-    } else {
-      res.redirect('/user/dashboard');
-    }
+    // Force session save for Vercel compatibility
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        return res.render('auth/login', { error: 'Login failed. Please try again.' });
+      }
+      
+      if (user.isAdmin) {
+        res.redirect('/admin/dashboard');
+      } else {
+        res.redirect('/user/dashboard');
+      }
+    });
   } catch (error) {
     res.render('auth/login', { error: 'Server error' });
   }
