@@ -89,16 +89,20 @@ router.get('/hackathon/:id/registrations', requireAdmin, async (req, res) => {
 // Approve registration
 router.post('/registration/:id/approve', requireAdmin, async (req, res) => {
   try {
+    console.log('Approving registration:', req.params.id);
     const registration = await Registration.findById(req.params.id);
     if (!registration) {
+      console.log('Registration not found:', req.params.id);
       return res.status(404).json({ success: false, message: 'Registration not found' });
     }
     
     registration.status = 'approved';
     await registration.save();
+    console.log('Registration approved successfully:', req.params.id);
     
     res.json({ success: true, message: 'Registration approved successfully' });
   } catch (error) {
+    console.error('Error approving registration:', error);
     res.status(500).json({ success: false, message: 'Failed to approve registration' });
   }
 });
@@ -106,16 +110,20 @@ router.post('/registration/:id/approve', requireAdmin, async (req, res) => {
 // Reject registration
 router.post('/registration/:id/reject', requireAdmin, async (req, res) => {
   try {
+    console.log('Rejecting registration:', req.params.id);
     const registration = await Registration.findById(req.params.id);
     if (!registration) {
+      console.log('Registration not found:', req.params.id);
       return res.status(404).json({ success: false, message: 'Registration not found' });
     }
     
     registration.status = 'rejected';
     await registration.save();
+    console.log('Registration rejected successfully:', req.params.id);
     
     res.json({ success: true, message: 'Registration rejected successfully' });
   } catch (error) {
+    console.error('Error rejecting registration:', error);
     res.status(500).json({ success: false, message: 'Failed to reject registration' });
   }
 });

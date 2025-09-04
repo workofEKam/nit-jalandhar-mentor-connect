@@ -267,27 +267,51 @@
 
     <script>
         function togglePartnerForm() {
-            const hasPartner = document.querySelector('input[name="hasPartner"]:checked').value;
+            console.log('togglePartnerForm called'); // Debug log
+            const hasPartnerRadio = document.querySelector('input[name="hasPartner"]:checked');
+            if (!hasPartnerRadio) {
+                console.log('No radio button selected');
+                return;
+            }
+            
+            const hasPartner = hasPartnerRadio.value;
             const partnerForm = document.getElementById('partnerForm');
             const partnerInputs = partnerForm.querySelectorAll('input, select');
 
+            console.log('Has partner:', hasPartner); // Debug log
+
             if (hasPartner === 'yes') {
                 partnerForm.classList.remove('hidden');
+                partnerForm.style.display = 'block'; // Ensure it's visible
                 // Make partner fields required
                 partnerInputs.forEach(input => {
-                    if (input.name.startsWith('partner')) {
+                    if (input.name && input.name.startsWith('partner')) {
                         input.required = true;
                     }
                 });
+                console.log('Partner form shown'); // Debug log
             } else {
                 partnerForm.classList.add('hidden');
+                partnerForm.style.display = 'none'; // Ensure it's hidden
                 // Remove required attribute and clear values
                 partnerInputs.forEach(input => {
                     input.required = false;
                     input.value = '';
                 });
+                console.log('Partner form hidden'); // Debug log
             }
         }
+
+        // Also add event listeners when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const radioButtons = document.querySelectorAll('input[name="hasPartner"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', togglePartnerForm);
+            });
+            
+            // Initialize form state
+            togglePartnerForm();
+        });
     </script>
 </body>
 

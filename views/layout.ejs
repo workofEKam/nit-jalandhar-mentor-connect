@@ -12,33 +12,88 @@
     <nav class="bg-blue-900 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-4">
-                    <h1 class="text-xl font-bold">NIT Jalandhar</h1>
-                    <span class="text-blue-200">Mentor Connect</span>
+                <div class="flex items-center space-x-2 md:space-x-4">
+                    <h1 class="text-lg md:text-xl font-bold">NIT Jalandhar</h1>
+                    <span class="text-blue-200 hidden sm:inline">Mentor Connect</span>
                 </div>
-                <div class="flex items-center space-x-4">
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-white hover:text-blue-200 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Desktop menu -->
+                <div class="hidden md:flex items-center space-x-4">
                     <% if (typeof user !== 'undefined' && user) { %>
-                        <span class="text-blue-200">Welcome, <%= user.name %></span>
+                        <span class="text-blue-200 text-sm">Welcome, <%= user.name %></span>
                         <% if (user.isAdmin) { %>
-                            <a href="/admin/dashboard" class="hover:text-blue-200">
+                            <a href="/admin/dashboard" class="hover:text-blue-200 text-sm">
                                 <i class="fas fa-tachometer-alt mr-1"></i>Admin
                             </a>
                         <% } else { %>
-                            <a href="/user/dashboard" class="hover:text-blue-200">
+                            <a href="/user/dashboard" class="hover:text-blue-200 text-sm">
                                 <i class="fas fa-user mr-1"></i>Dashboard
                             </a>
                         <% } %>
-                        <a href="/auth/logout" class="bg-red-600 px-3 py-1 rounded hover:bg-red-700">
+                        <a href="/auth/logout" class="bg-red-600 px-3 py-1 rounded hover:bg-red-700 text-sm">
                             <i class="fas fa-sign-out-alt mr-1"></i>Logout
                         </a>
                     <% } else { %>
-                        <a href="/auth/login" class="hover:text-blue-200">Login</a>
-                        <a href="/auth/register" class="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700">Register</a>
+                        <a href="/auth/login" class="hover:text-blue-200 text-sm">Login</a>
+                        <a href="/auth/register" class="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700 text-sm">Register</a>
+                    <% } %>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="md:hidden hidden pb-4">
+                <div class="flex flex-col space-y-2">
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <div class="text-blue-200 text-sm py-2 border-b border-blue-800">
+                            Welcome, <%= user.name %>
+                        </div>
+                        <% if (user.isAdmin) { %>
+                            <a href="/admin/dashboard" class="hover:text-blue-200 text-sm py-2 flex items-center">
+                                <i class="fas fa-tachometer-alt mr-2"></i>Admin Dashboard
+                            </a>
+                        <% } else { %>
+                            <a href="/user/dashboard" class="hover:text-blue-200 text-sm py-2 flex items-center">
+                                <i class="fas fa-user mr-2"></i>Dashboard
+                            </a>
+                        <% } %>
+                        <a href="/auth/logout" class="bg-red-600 px-3 py-2 rounded hover:bg-red-700 text-sm flex items-center justify-center mt-2">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </a>
+                    <% } else { %>
+                        <a href="/auth/login" class="hover:text-blue-200 text-sm py-2">Login</a>
+                        <a href="/auth/register" class="bg-blue-600 px-3 py-2 rounded hover:bg-blue-700 text-sm text-center">Register</a>
                     <% } %>
                 </div>
             </div>
         </div>
     </nav>
+    
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                    const icon = mobileMenuButton.querySelector('i');
+                    if (mobileMenu.classList.contains('hidden')) {
+                        icon.className = 'fas fa-bars text-xl';
+                    } else {
+                        icon.className = 'fas fa-times text-xl';
+                    }
+                });
+            }
+        });
+    </script>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-8">
