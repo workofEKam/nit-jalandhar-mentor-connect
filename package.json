@@ -1,7 +1,7 @@
 {
   "name": "nit-jalandhar-mentor-connect",
   "version": "1.0.0",
-  "description": "NIT Jalandhar Mentor Connect Hackathon Platform",
+  "description": "NIT Jalandhar Mentor Connect Hackathon Platform - Production Ready",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
