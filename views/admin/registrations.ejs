@@ -124,7 +124,7 @@
                         Registrations (<%= registrations.length %>)
                     </h2>
                     <div class="flex space-x-2">
-                        <select id="statusFilter" onchange="filterRegistrations()" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                        <select id="statusFilter" class="px-3 py-1 border border-gray-300 rounded text-sm">
                             <option value="all">All Status</option>
                             <option value="pending">Pending</option>
                             <option value="approved">Approved</option>
@@ -190,30 +190,30 @@
                                         <td class="px-4 py-3">
                                             <div class="flex space-x-2">
                                                 <% if (registration.status === 'pending') { %>
-                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'approve')" 
-                                                            class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition duration-300">
+                                                    <button data-registration-id="<%= registration._id %>" data-action="approve"
+                                                            class="status-btn bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition duration-300">
                                                         <i class="fas fa-check mr-1"></i>Approve
                                                     </button>
-                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'reject')" 
-                                                            class="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition duration-300">
+                                                    <button data-registration-id="<%= registration._id %>" data-action="reject"
+                                                            class="status-btn bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition duration-300">
                                                         <i class="fas fa-times mr-1"></i>Reject
                                                     </button>
                                                 <% } else if (registration.status === 'approved') { %>
-                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'reject')" 
-                                                            class="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition duration-300">
+                                                    <button data-registration-id="<%= registration._id %>" data-action="reject"
+                                                            class="status-btn bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition duration-300">
                                                         <i class="fas fa-times mr-1"></i>Reject
                                                     </button>
-                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'reset')" 
-                                                            class="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700 transition duration-300">
+                                                    <button data-registration-id="<%= registration._id %>" data-action="reset"
+                                                            class="status-btn bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700 transition duration-300">
                                                         <i class="fas fa-undo mr-1"></i>Reset
                                                     </button>
                                                 <% } else if (registration.status === 'rejected') { %>
-                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'approve')" 
-                                                            class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition duration-300">
+                                                    <button data-registration-id="<%= registration._id %>" data-action="approve"
+                                                            class="status-btn bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition duration-300">
                                                         <i class="fas fa-check mr-1"></i>Approve
                                                     </button>
-                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'reset')" 
-                                                            class="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700 transition duration-300">
+                                                    <button data-registration-id="<%= registration._id %>" data-action="reset"
+                                                            class="status-btn bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700 transition duration-300">
                                                         <i class="fas fa-undo mr-1"></i>Reset
                                                     </button>
                                                 <% } %>
@@ -271,11 +271,11 @@
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-lg font-semibold mb-4">Export Options</h3>
                     <div class="flex space-x-4">
-                        <button onclick="exportToCSV()" 
+                        <button id="exportCSV"
                                 class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">
                             <i class="fas fa-file-csv mr-2"></i>Export to CSV
                         </button>
-                        <button onclick="window.print()" 
+                        <button id="printReport"
                                 class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300">
                             <i class="fas fa-print mr-2"></i>Print Report
                         </button>

@@ -43,7 +43,7 @@
             </div>
             
             <div class="flex justify-center space-x-4">
-                <button onclick="history.back()" 
+                <button id="goBackBtn" 
                         class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition duration-300 inline-flex items-center">
                     <i class="fas fa-arrow-left mr-2"></i>Go Back
                 </button>
@@ -54,5 +54,16 @@
             </div>
         </div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const goBackBtn = document.getElementById('goBackBtn');
+            if (goBackBtn) {
+                goBackBtn.addEventListener('click', function() {
+                    history.back();
+                });
+            }
+        });
+    </script>
 </body>
 </html>
