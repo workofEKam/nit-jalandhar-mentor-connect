@@ -293,6 +293,38 @@
     </footer>
 
     <script>
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listeners for status buttons
+        document.querySelectorAll('.status-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const registrationId = this.getAttribute('data-registration-id');
+                const action = this.getAttribute('data-action');
+                updateRegistrationStatus(registrationId, action);
+            });
+        });
+
+        // Add event listener for status filter
+        const statusFilter = document.getElementById('statusFilter');
+        if (statusFilter) {
+            statusFilter.addEventListener('change', filterRegistrations);
+        }
+
+        // Add event listener for export CSV button
+        const exportCSVBtn = document.getElementById('exportCSV');
+        if (exportCSVBtn) {
+            exportCSVBtn.addEventListener('click', exportToCSV);
+        }
+
+        // Add event listener for print button
+        const printBtn = document.getElementById('printReport');
+        if (printBtn) {
+            printBtn.addEventListener('click', function() {
+                window.print();
+            });
+        }
+    });
+
     function exportToCSV() {
         const registrations = <%- JSON.stringify(registrations) %>;
         
@@ -325,12 +357,16 @@
             return;
         }
 
-        const button = event.target.closest('button');
+        // Find the button that was clicked
+        const button = document.querySelector(`[data-registration-id="${registrationId}"][data-action="${action}"]`);
         const originalText = button.innerHTML;
         button.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Processing...';
         button.disabled = true;
 
-        fetch(`/admin/registration/${registrationId}/${action}`, {
+        // Map action to endpoint
+        const endpoint = action === 'reset' ? 'pending' : action;
+
+        fetch(`/admin/registration/${registrationId}/${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
