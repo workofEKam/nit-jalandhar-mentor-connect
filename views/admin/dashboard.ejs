@@ -1,0 +1,123 @@
+<%- include('../layout', { body: `
+<div class="space-y-8">
+    <!-- Admin Header -->
+    <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-8 rounded-lg">
+        <h1 class="text-3xl font-bold mb-2">Admin Dashboard</h1>
+        <p class="text-purple-100">Manage hackathons and monitor registrations</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Total Users</p>
+                    <p class="text-3xl font-bold text-blue-600">${stats.totalUsers}</p>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Total Hackathons</p>
+                    <p class="text-3xl font-bold text-green-600">${stats.totalHackathons}</p>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full">
+                    <i class="fas fa-code text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Total Registrations</p>
+                    <p class="text-3xl font-bold text-purple-600">${stats.totalRegistrations}</p>
+                </div>
+                <div class="bg-purple-100 p-3 rounded-full">
+                    <i class="fas fa-clipboard-list text-purple-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">Quick Actions</h2>
+        <div class="flex flex-wrap gap-4">
+            <a href="/admin/create-hackathon" 
+               class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center">
+                <i class="fas fa-plus mr-2"></i>Create New Hackathon
+            </a>
+        </div>
+    </div>
+
+    <!-- Hackathons Management -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-code mr-3 text-blue-600"></i>
+            Manage Hackathons
+        </h2>
+        
+        ${hackathons && hackathons.length > 0 ? `
+            <div class="overflow-x-auto">
+                <table class="w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-4 py-3 text-left font-semibold">Title</th>
+                            <th class="px-4 py-3 text-left font-semibold">Start Date</th>
+                            <th class="px-4 py-3 text-left font-semibold">End Date</th>
+                            <th class="px-4 py-3 text-left font-semibold">Max Participants</th>
+                            <th class="px-4 py-3 text-left font-semibold">Status</th>
+                            <th class="px-4 py-3 text-left font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        ${hackathons.map(hackathon => `
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3">
+                                    <div>
+                                        <div class="font-semibold">${hackathon.title}</div>
+                                        <div class="text-sm text-gray-600">${hackathon.description.substring(0, 50)}...</div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-sm">${new Date(hackathon.startDate).toLocaleDateString()}</td>
+                                <td class="px-4 py-3 text-sm">${new Date(hackathon.endDate).toLocaleDateString()}</td>
+                                <td class="px-4 py-3 text-sm">${hackathon.maxParticipants}</td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                                        hackathon.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                    }">
+                                        ${hackathon.isActive ? 'Active' : 'Inactive'}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex space-x-2">
+                                        <a href="/admin/hackathon/${hackathon._id}/registrations" 
+                                           class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition duration-300">
+                                            <i class="fas fa-eye mr-1"></i>View Registrations
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        ` : `
+            <div class="text-center py-8 text-gray-500">
+                <i class="fas fa-code text-4xl mb-4"></i>
+                <p class="mb-4">No hackathons created yet.</p>
+                <a href="/admin/create-hackathon" 
+                   class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                    Create Your First Hackathon
+                </a>
+            </div>
+        `}
+    </div>
+</div>
+` }) %>

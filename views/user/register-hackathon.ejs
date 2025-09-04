@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIT Jalandhar - Mentor Connect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-blue-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-xl font-bold">NIT Jalandhar</h1>
+                    <span class="text-blue-200">Mentor Connect</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <% if (typeof user !=='undefined' && user) { %>
+                        <span class="text-blue-200">Welcome, <%= user.name %></span>
+                        <% if (user.isAdmin) { %>
+                            <a href="/admin/dashboard" class="hover:text-blue-200">
+                                <i class="fas fa-tachometer-alt mr-1"></i>Admin
+                            </a>
+                            <% } else { %>
+                                <a href="/user/dashboard" class="hover:text-blue-200">
+                                    <i class="fas fa-user mr-1"></i>Dashboard
+                                </a>
+                                <% } %>
+                                    <a href="/auth/logout" class="bg-red-600 px-3 py-1 rounded hover:bg-red-700">
+                                        <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                                    </a>
+                                    <% } else { %>
+                                        <a href="/auth/login" class="hover:text-blue-200">Login</a>
+                                        <a href="/auth/register"
+                                            class="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700">Register</a>
+                                        <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Hackathon Info -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h1 class="text-3xl font-bold mb-4">
+                <%= hackathon.title %>
+            </h1>
+            <p class="text-gray-600 mb-6">
+                <%= hackathon.description %>
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-calendar text-blue-600 mr-3"></i>
+                        <span><strong>Start:</strong>
+                            <%= new Date(hackathon.startDate).toLocaleDateString() %>
+                        </span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-calendar-check text-blue-600 mr-3"></i>
+                        <span><strong>End:</strong>
+                            <%= new Date(hackathon.endDate).toLocaleDateString() %>
+                        </span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-clock text-orange-600 mr-3"></i>
+                        <span><strong>Registration Deadline:</strong>
+                            <%= new Date(hackathon.registrationDeadline).toLocaleDateString() %>
+                        </span>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-users text-green-600 mr-3"></i>
+                        <span><strong>Max Participants:</strong>
+                            <%= hackathon.maxParticipants %>
+                        </span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-trophy text-yellow-600 mr-3"></i>
+                        <span><strong>Prizes:</strong>
+                            <%= hackathon.prizes %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-semibold mb-2">Rules & Guidelines:</h3>
+                <p class="text-gray-700">
+                    <%= hackathon.rules %>
+                </p>
+            </div>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-2xl font-bold mb-6 text-center">Register for Hackathon</h2>
+
+            <% if (typeof error !=='undefined' && error) { %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <form method="POST" action="/user/register/<%= hackathon._id %>" class="space-y-6">
+                        <!-- Confirmation Section -->
+                        <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-user-check text-blue-600 text-2xl mr-3"></i>
+                                <h3 class="text-xl font-semibold text-blue-800">Confirm Your Registration</h3>
+                            </div>
+                            <p class="text-blue-700 mb-4">
+                                You are registering as: <strong>
+                                    <%= user.name %>
+                                </strong> (<%= user.rollNumber %>)
+                            </p>
+                            <div class="bg-white p-4 rounded border">
+                                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                    <div><strong>Email:</strong>
+                                        <%= user.email %>
+                                    </div>
+                                    <div><strong>Branch:</strong>
+                                        <%= user.branch %>
+                                    </div>
+                                    <div><strong>Year:</strong>
+                                        <%= user.year %>
+                                    </div>
+                                    <div><strong>Phone:</strong>
+                                        <%= user.phone %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Partner Section -->
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h3 class="text-lg font-semibold mb-4 flex items-center">
+                                <i class="fas fa-users text-gray-600 mr-2"></i>
+                                Do you have a partner?
+                            </h3>
+
+                            <div class="space-y-4">
+                                <div class="flex space-x-6">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="hasPartner" value="no" checked class="mr-2"
+                                            onchange="togglePartnerForm()">
+                                        <span>No, I'll participate individually</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="hasPartner" value="yes" class="mr-2"
+                                            onchange="togglePartnerForm()">
+                                        <span>Yes, I have a partner</span>
+                                    </label>
+                                </div>
+
+                                <!-- Partner Details Form -->
+                                <div id="partnerForm" class="hidden mt-6 p-4 bg-white rounded border">
+                                    <h4 class="font-semibold mb-4">Partner Details</h4>
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="partnerName"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Partner
+                                                Name</label>
+                                            <input type="text" id="partnerName" name="partnerName"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                placeholder="Enter partner's full name">
+                                        </div>
+                                        <div>
+                                            <label for="partnerEmail"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Partner
+                                                Email</label>
+                                            <input type="email" id="partnerEmail" name="partnerEmail"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                placeholder="Enter partner's email">
+                                        </div>
+                                        <div>
+                                            <label for="partnerRollNumber"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Partner Roll
+                                                Number</label>
+                                            <input type="text" id="partnerRollNumber" name="partnerRollNumber"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                placeholder="Enter partner's roll number">
+                                        </div>
+                                        <div>
+                                            <label for="partnerPhone"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Partner
+                                                Phone</label>
+                                            <input type="tel" id="partnerPhone" name="partnerPhone"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                placeholder="Enter partner's phone number">
+                                        </div>
+                                        <div>
+                                            <label for="partnerBranch"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Partner
+                                                Branch</label>
+                                            <select id="partnerBranch" name="partnerBranch"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="">Select Branch</option>
+                                                <option value="CSE">Computer Science Engineering</option>
+                                                <option value="ECE">Electronics & Communication Engineering</option>
+                                                <option value="ME">Mechanical Engineering</option>
+                                                <option value="CE">Civil Engineering</option>
+                                                <option value="EE">Electrical Engineering</option>
+                                                <option value="IT">Information Technology</option>
+                                                <option value="DS">Data Science</option>
+                                                <option value="TT">Textile Technology</option>
+                                                <option value="MNC">Mathematics and Computing</option>
+                                                <option value="ICE">Instrumentation & Control Engineering</option>
+                                                <option value="CHE">Chemical Engineering</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="partnerYear"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Partner
+                                                Year</label>
+                                            <select id="partnerYear" name="partnerYear"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="">Select Year</option>
+                                                <option value="1">1st Year</option>
+                                                <option value="2">2nd Year</option>
+                                                <option value="3">3rd Year</option>
+                                                <option value="4">4th Year</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Section -->
+                        <div class="bg-green-50 p-6 rounded-lg border border-green-200">
+                            <div class="text-center">
+                                <i class="fas fa-check-circle text-green-600 text-3xl mb-3"></i>
+                                <h3 class="text-lg font-semibold text-green-800 mb-2">Ready to Register?</h3>
+                                <p class="text-green-700 mb-4">
+                                    By clicking "Yes, Register Me!" you confirm your participation in this hackathon.
+                                </p>
+                                <div class="flex justify-center space-x-4">
+                                    <button type="submit"
+                                        class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300 text-lg font-semibold">
+                                        <i class="fas fa-paper-plane mr-2"></i>Yes, Register Me!
+                                    </button>
+                                    <a href="/user/dashboard"
+                                        class="bg-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-400 transition duration-300 text-lg font-semibold">
+                                        <i class="fas fa-times mr-2"></i>Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>&copy; 2024 NIT Jalandhar - Mentor Connect. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function togglePartnerForm() {
+            const hasPartner = document.querySelector('input[name="hasPartner"]:checked').value;
+            const partnerForm = document.getElementById('partnerForm');
+            const partnerInputs = partnerForm.querySelectorAll('input, select');
+
+            if (hasPartner === 'yes') {
+                partnerForm.classList.remove('hidden');
+                // Make partner fields required
+                partnerInputs.forEach(input => {
+                    if (input.name.startsWith('partner')) {
+                        input.required = true;
+                    }
+                });
+            } else {
+                partnerForm.classList.add('hidden');
+                // Remove required attribute and clear values
+                partnerInputs.forEach(input => {
+                    input.required = false;
+                    input.value = '';
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

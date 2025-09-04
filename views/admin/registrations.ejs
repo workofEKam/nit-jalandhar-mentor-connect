@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIT Jalandhar - Mentor Connect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-blue-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-xl font-bold">NIT Jalandhar</h1>
+                    <span class="text-blue-200">Mentor Connect</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <span class="text-blue-200">Welcome, <%= user.name %></span>
+                        <% if (user.isAdmin) { %>
+                            <a href="/admin/dashboard" class="hover:text-blue-200">
+                                <i class="fas fa-tachometer-alt mr-1"></i>Admin
+                            </a>
+                        <% } else { %>
+                            <a href="/user/dashboard" class="hover:text-blue-200">
+                                <i class="fas fa-user mr-1"></i>Dashboard
+                            </a>
+                        <% } %>
+                        <a href="/auth/logout" class="bg-red-600 px-3 py-1 rounded hover:bg-red-700">
+                            <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                        </a>
+                    <% } else { %>
+                        <a href="/auth/login" class="hover:text-blue-200">Login</a>
+                        <a href="/auth/register" class="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700">Register</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="space-y-8">
+            <!-- Hackathon Header -->
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2"><%= hackathon.title %></h1>
+                        <p class="text-gray-600 mb-4"><%= hackathon.description %></p>
+                        
+                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar text-blue-600 mr-2"></i>
+                                <span><%= new Date(hackathon.startDate).toLocaleDateString() %> - <%= new Date(hackathon.endDate).toLocaleDateString() %></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-users text-green-600 mr-2"></i>
+                                <span>Max <%= hackathon.maxParticipants %> participants</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-clock text-orange-600 mr-2"></i>
+                                <span>Registration deadline: <%= new Date(hackathon.registrationDeadline).toLocaleDateString() %></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-clipboard-list text-purple-600 mr-2"></i>
+                                <span><%= registrations.length %> registrations</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/admin/dashboard" 
+                       class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Registration Summary -->
+            <div class="grid md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Total</p>
+                            <p class="text-2xl font-bold text-blue-600"><%= registrations.length %></p>
+                        </div>
+                        <i class="fas fa-clipboard-list text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Pending</p>
+                            <p class="text-2xl font-bold text-yellow-600"><%= registrations.filter(r => r.status === 'pending').length %></p>
+                        </div>
+                        <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Approved</p>
+                            <p class="text-2xl font-bold text-green-600"><%= registrations.filter(r => r.status === 'approved').length %></p>
+                        </div>
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm">Rejected</p>
+                            <p class="text-2xl font-bold text-red-600"><%= registrations.filter(r => r.status === 'rejected').length %></p>
+                        </div>
+                        <i class="fas fa-times-circle text-red-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registrations -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold flex items-center">
+                        <i class="fas fa-clipboard-list mr-3 text-blue-600"></i>
+                        Registrations (<%= registrations.length %>)
+                    </h2>
+                    <div class="flex space-x-2">
+                        <select id="statusFilter" onchange="filterRegistrations()" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <% if (registrations && registrations.length > 0) { %>
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-4 py-3 text-left font-semibold">Registration Type</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Participant</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Contact</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Team Size</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Registration Date</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Status</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <% registrations.forEach(function(registration) { %>
+                                    <tr class="hover:bg-gray-50 registration-row" data-status="<%= registration.status %>">
+                                        <td class="px-4 py-3">
+                                            <div class="font-semibold">
+                                                <% if (registration.hasPartner) { %>
+                                                    <i class="fas fa-users text-blue-600 mr-2"></i>Team Registration
+                                                <% } else { %>
+                                                    <i class="fas fa-user text-green-600 mr-2"></i>Individual
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div>
+                                                <div class="font-medium"><%= registration.user.name %></div>
+                                                <div class="text-sm text-gray-600"><%= registration.user.rollNumber %> - <%= registration.user.branch %></div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div class="text-sm">
+                                                <div><%= registration.user.email %></div>
+                                                <div class="text-gray-600"><%= registration.user.phone %></div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm">
+                                            <%= registration.hasPartner ? '2' : '1' %> member<%= registration.hasPartner ? 's' : '' %>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm">
+                                            <%= new Date(registration.createdAt).toLocaleDateString() %>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="px-2 py-1 rounded-full text-xs font-medium 
+                                                    <% if (registration.status === 'approved') { %>bg-green-100 text-green-800<% } 
+                                                       else if (registration.status === 'rejected') { %>bg-red-100 text-red-800<% } 
+                                                       else { %>bg-yellow-100 text-yellow-800<% } %>">
+                                                    <%= registration.status.charAt(0).toUpperCase() + registration.status.slice(1) %>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex space-x-2">
+                                                <% if (registration.status === 'pending') { %>
+                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'approve')" 
+                                                            class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition duration-300">
+                                                        <i class="fas fa-check mr-1"></i>Approve
+                                                    </button>
+                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'reject')" 
+                                                            class="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition duration-300">
+                                                        <i class="fas fa-times mr-1"></i>Reject
+                                                    </button>
+                                                <% } else if (registration.status === 'approved') { %>
+                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'reject')" 
+                                                            class="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition duration-300">
+                                                        <i class="fas fa-times mr-1"></i>Reject
+                                                    </button>
+                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'reset')" 
+                                                            class="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700 transition duration-300">
+                                                        <i class="fas fa-undo mr-1"></i>Reset
+                                                    </button>
+                                                <% } else if (registration.status === 'rejected') { %>
+                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'approve')" 
+                                                            class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition duration-300">
+                                                        <i class="fas fa-check mr-1"></i>Approve
+                                                    </button>
+                                                    <button onclick="updateRegistrationStatus('<%= registration._id %>', 'reset')" 
+                                                            class="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700 transition duration-300">
+                                                        <i class="fas fa-undo mr-1"></i>Reset
+                                                    </button>
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-gray-50 registration-details" data-status="<%= registration.status %>">
+                                        <td colspan="7" class="px-4 py-3">
+                                            <div class="text-sm">
+                                                <% if (registration.hasPartner && registration.partner) { %>
+                                                    <div class="font-medium mb-2">Partner Details:</div>
+                                                    <div class="bg-white p-3 rounded border">
+                                                        <div class="grid md:grid-cols-2 gap-4">
+                                                            <div>
+                                                                <span class="font-medium">Name:</span> <%= registration.partner.name %>
+                                                            </div>
+                                                            <div>
+                                                                <span class="font-medium">Email:</span> <%= registration.partner.email %>
+                                                            </div>
+                                                            <div>
+                                                                <span class="font-medium">Roll Number:</span> <%= registration.partner.rollNumber %>
+                                                            </div>
+                                                            <div>
+                                                                <span class="font-medium">Branch:</span> <%= registration.partner.branch %>
+                                                            </div>
+                                                            <div>
+                                                                <span class="font-medium">Year:</span> <%= registration.partner.year %>
+                                                            </div>
+                                                            <div>
+                                                                <span class="font-medium">Phone:</span> <%= registration.partner.phone %>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <% } else { %>
+                                                    <div class="text-gray-600 italic">Individual registration - no partner details</div>
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-clipboard-list text-6xl mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">No Registrations Yet</h3>
+                        <p>No students have registered for this hackathon yet. Check back later!</p>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Export Options -->
+            <% if (registrations && registrations.length > 0) { %>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Export Options</h3>
+                    <div class="flex space-x-4">
+                        <button onclick="exportToCSV()" 
+                                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">
+                            <i class="fas fa-file-csv mr-2"></i>Export to CSV
+                        </button>
+                        <button onclick="window.print()" 
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300">
+                            <i class="fas fa-print mr-2"></i>Print Report
+                        </button>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>&copy; 2024 NIT Jalandhar - Mentor Connect. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    function exportToCSV() {
+        const registrations = <%- JSON.stringify(registrations) %>;
+        
+        let csv = 'Registration Type,Participant Name,Email,Phone,Roll Number,Branch,Year,Team Size,Partner Name,Partner Email,Partner Roll Number,Registration Date,Status\n';
+        
+        registrations.forEach(reg => {
+            const registrationType = reg.hasPartner ? 'Team' : 'Individual';
+            const teamSize = reg.hasPartner ? 2 : 1;
+            const registrationDate = new Date(reg.createdAt).toLocaleDateString();
+            const partnerName = reg.partner ? reg.partner.name : '';
+            const partnerEmail = reg.partner ? reg.partner.email : '';
+            const partnerRollNumber = reg.partner ? reg.partner.rollNumber : '';
+            
+            csv += `"${registrationType}","${reg.user.name}","${reg.user.email}","${reg.user.phone}","${reg.user.rollNumber}","${reg.user.branch}","${reg.user.year}",${teamSize},"${partnerName}","${partnerEmail}","${partnerRollNumber}","${registrationDate}","${reg.status}"\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '<%= hackathon.title.replace(/[^a-zA-Z0-9]/g, "_") %>_registrations.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+
+    function updateRegistrationStatus(registrationId, action) {
+        if (!confirm(`Are you sure you want to ${action} this registration?`)) {
+            return;
+        }
+
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Processing...';
+        button.disabled = true;
+
+        fetch(`/admin/registration/${registrationId}/${action}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                showNotification(data.message, 'success');
+                // Reload the page to reflect changes
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showNotification(data.message, 'error');
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('An error occurred while updating the registration status', 'error');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        });
+    }
+
+    function showNotification(message, type) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
+            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`;
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
+                ${message}
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    function filterRegistrations() {
+        const filter = document.getElementById('statusFilter').value;
+        const rows = document.querySelectorAll('.registration-row, .registration-details');
+        
+        rows.forEach(row => {
+            if (filter === 'all' || row.dataset.status === filter) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+    </script>
+</body>
+</html>

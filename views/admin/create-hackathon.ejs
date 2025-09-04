@@ -1,0 +1,98 @@
+<%- include('../layout', { body: `
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Create New Hackathon</h1>
+            <p class="text-gray-600 mt-2">Set up a new hackathon for students to participate in</p>
+        </div>
+
+        ${error ? '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">' + error + '</div>' : ''}
+
+        <form method="POST" action="/admin/create-hackathon" class="space-y-6">
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Hackathon Title</label>
+                <input type="text" id="title" name="title" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Enter hackathon title">
+            </div>
+
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea id="description" name="description" rows="4" required 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Describe the hackathon theme, objectives, and what participants can expect..."></textarea>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <label for="startDate" class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <input type="datetime-local" id="startDate" name="startDate" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label for="endDate" class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                    <input type="datetime-local" id="endDate" name="endDate" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <label for="registrationDeadline" class="block text-sm font-medium text-gray-700 mb-2">Registration Deadline</label>
+                    <input type="datetime-local" id="registrationDeadline" name="registrationDeadline" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label for="maxParticipants" class="block text-sm font-medium text-gray-700 mb-2">Maximum Participants</label>
+                    <input type="number" id="maxParticipants" name="maxParticipants" required min="1" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="e.g., 100">
+                </div>
+            </div>
+
+            <div>
+                <label for="prizes" class="block text-sm font-medium text-gray-700 mb-2">Prizes</label>
+                <textarea id="prizes" name="prizes" rows="3" required 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Describe the prizes for winners (e.g., 1st Prize: ₹50,000, 2nd Prize: ₹30,000, etc.)"></textarea>
+            </div>
+
+            <div>
+                <label for="rules" class="block text-sm font-medium text-gray-700 mb-2">Rules & Guidelines</label>
+                <textarea id="rules" name="rules" rows="6" required 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter detailed rules, eligibility criteria, submission guidelines, judging criteria, etc."></textarea>
+            </div>
+
+            <div class="flex space-x-4 pt-6">
+                <button type="submit" 
+                        class="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
+                    <i class="fas fa-plus mr-2"></i>Create Hackathon
+                </button>
+                <a href="/admin/dashboard" 
+                   class="bg-gray-300 text-gray-700 px-8 py-3 rounded-md hover:bg-gray-400 transition duration-300">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Set minimum dates to today
+const today = new Date();
+const todayString = today.toISOString().slice(0, 16);
+
+document.getElementById('startDate').min = todayString;
+document.getElementById('endDate').min = todayString;
+document.getElementById('registrationDeadline').min = todayString;
+
+// Ensure end date is after start date
+document.getElementById('startDate').addEventListener('change', function() {
+    document.getElementById('endDate').min = this.value;
+    document.getElementById('registrationDeadline').max = this.value;
+});
+</script>
+` }) %>
