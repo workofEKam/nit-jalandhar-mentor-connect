@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const Hackathon = require('../models/Hackathon');
 const Registration = require('../models/Registration');
 const User = require('../models/User');
@@ -16,11 +17,25 @@ const requireAuth = (req, res, next) => {
 router.get('/dashboard', requireAuth, async (req, res) => {
   try {
     const hackathons = await Hackathon.find({ isActive: true });
-    const userRegistrations = await Registration.find({ user: req.session.user.id })
-      .populate('hackathon');
+    
+    // Convert session user id to ObjectId for proper comparison
+    const userId = new mongoose.Types.ObjectId(req.session.user.id);
+    const userRegistrations = await Registration.find({ user: userId })
+      .populate('hackathon')
+      .populate('user');
     
     // Get full user details from database
     const fullUser = await User.findById(req.session.user.id);
+    
+    console.log('Dashboard Debug:', {
+      userId: req.session.user.id,
+      registrationsCount: userRegistrations.length,
+      registrations: userRegistrations.map(r => ({
+        id: r._id,
+        hackathon: r.hackathon?.title,
+        status: r.status
+      }))
+    });
     
     res.render('user/dashboard', { 
       user: fullUser, 
@@ -28,6 +43,7 @@ router.get('/dashboard', requireAuth, async (req, res) => {
       registrations: userRegistrations
     });
   } catch (error) {
+    console.error('Dashboard error:', error);
     res.render('user/dashboard', { 
       user: req.session.user, 
       hackathons: [],
@@ -64,10 +80,13 @@ router.post('/register/:id', requireAuth, async (req, res) => {
     const { hasPartner, partnerName, partnerEmail, partnerRollNumber, partnerBranch, partnerYear, partnerPhone } = req.body;
     const hackathonId = req.params.id;
     
-    // Check if already registered
+    // Check if already registered - use ObjectId for proper comparison
+    const userId = new mongoose.Types.ObjectId(req.session.user.id);
+    const hackathonObjectId = new mongoose.Types.ObjectId(hackathonId);
+    
     const existingRegistration = await Registration.findOne({
-      user: req.session.user.id,
-      hackathon: hackathonId
+      user: userId,
+      hackathon: hackathonObjectId
     });
     
     if (existingRegistration) {
@@ -81,8 +100,8 @@ router.post('/register/:id', requireAuth, async (req, res) => {
     }
     
     const registrationData = {
-      user: req.session.user.id,
-      hackathon: hackathonId,
+      user: userId,
+      hackathon: hackathonObjectId,
       hasPartner: hasPartner === 'yes'
     };
     
@@ -99,6 +118,14 @@ router.post('/register/:id', requireAuth, async (req, res) => {
     
     const registration = new Registration(registrationData);
     await registration.save();
+    
+    console.log('Registration saved:', {
+      registrationId: registration._id,
+      userId: registration.user,
+      hackathonId: registration.hackathon,
+      status: registration.status
+    });
+    
     res.redirect('/user/dashboard');
   } catch (error) {
     const hackathon = await Hackathon.findById(req.params.id);
