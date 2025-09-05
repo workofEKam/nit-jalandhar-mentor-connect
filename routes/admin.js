@@ -72,9 +72,23 @@ router.post('/create-hackathon', requireAdmin, async (req, res) => {
 // View registrations for a hackathon
 router.get('/hackathon/:id/registrations', requireAdmin, async (req, res) => {
   try {
+    console.log('Fetching registrations for hackathon:', req.params.id);
+    
     const hackathon = await Hackathon.findById(req.params.id);
+    if (!hackathon) {
+      console.log('Hackathon not found:', req.params.id);
+      return res.status(404).render('error', {
+        message: 'Hackathon not found',
+        user: req.session.user
+      });
+    }
+    
+    console.log('Found hackathon:', hackathon.title);
+    
     const registrations = await Registration.find({ hackathon: req.params.id })
       .populate('user');
+    
+    console.log('Found registrations:', registrations.length);
     
     res.render('admin/registrations', {
       user: req.session.user,
@@ -82,7 +96,11 @@ router.get('/hackathon/:id/registrations', requireAdmin, async (req, res) => {
       registrations
     });
   } catch (error) {
-    res.redirect('/admin/dashboard');
+    console.error('Error fetching registrations:', error);
+    res.status(500).render('error', {
+      message: 'Failed to load registrations',
+      user: req.session.user
+    });
   }
 });
 
