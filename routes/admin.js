@@ -128,7 +128,26 @@ router.post('/registration/:id/reject', requireAdmin, async (req, res) => {
   }
 });
 
-// Reset registration status to pending
+// Reset registration to pending
+router.post('/registration/:id/pending', requireAdmin, async (req, res) => {
+  try {
+    console.log('Resetting registration to pending:', req.params.id);
+    const registration = await Registration.findById(req.params.id);
+    if (!registration) {
+      console.log('Registration not found:', req.params.id);
+      return res.status(404).json({ success: false, message: 'Registration not found' });
+    }
+    registration.status = 'pending';
+    await registration.save();
+    console.log('Registration reset to pending successfully:', req.params.id);
+    res.json({ success: true, message: 'Registration reset to pending successfully' });
+  } catch (error) {
+    console.error('Error resetting registration:', error);
+    res.status(500).json({ success: false, message: 'Failed to reset registration' });
+  }
+});
+
+// Reset registration status to pending (alternative route)
 router.post('/registration/:id/reset', requireAdmin, async (req, res) => {
   try {
     const registration = await Registration.findById(req.params.id);

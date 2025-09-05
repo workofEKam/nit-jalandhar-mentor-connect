@@ -1,5 +1,4 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const router = express.Router();
@@ -31,7 +30,7 @@ router.post('/login', [
       return res.render('auth/login', { error: 'Invalid credentials' });
     }
     
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = password === user.password;
     if (!isMatch) {
       return res.render('auth/login', { error: 'Invalid credentials' });
     }
@@ -84,12 +83,10 @@ router.post('/register', [
       return res.render('auth/register', { error: 'Email already exists' });
     }
     
-    const hashedPassword = await bcrypt.hash(password, 12);
-    
     const user = new User({
       name,
       email,
-      password: hashedPassword,
+      password: password,
       rollNumber,
       branch,
       year,
