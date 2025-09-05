@@ -65,7 +65,7 @@ router.post('/login', [
 router.post('/register', [
   body('name').trim().isLength({ min: 2, max: 50 }).withMessage('Name must be between 2 and 50 characters'),
   body('email').isEmail().normalizeEmail().withMessage('Please enter a valid email'),
-  body('password').isLength({ min: 8 }).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Password must be at least 8 characters with uppercase, lowercase and number'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
   body('rollNumber').trim().isLength({ min: 5, max: 15 }).withMessage('Roll number must be between 5 and 15 characters'),
   body('branch').isIn(['CSE', 'ECE', 'ME', 'CE', 'EE', 'IT', 'DS', 'TT', 'MNC', 'ICE', 'CHE']).withMessage('Please select a valid branch'),
   body('year').isInt({ min: 1, max: 4 }).withMessage('Please select a valid year'),
